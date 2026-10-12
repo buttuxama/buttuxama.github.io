@@ -13,7 +13,7 @@ The site is a single-page dark-themed layout with five sections — Hero, Experi
 | Language | [TypeScript](https://www.typescriptlang.org) | 5.6 | Type-safe content contracts (`GitHubRepo`, `ExperienceEntry`, etc.) so the build fails loudly if the GitHub API shape changes |
 | Styling | [Tailwind CSS](https://tailwindcss.com) | 3.4 | Utility-first, custom palette in `tailwind.config.ts`, self-hosted fonts |
 | Icons | [lucide-react](https://lucide.dev) | 0.469 | Clean, tree-shakable SVG icons |
-| Fonts | [`@fontsource/ibm-plex-serif`](https://fontsource.org/fonts/ibm-plex-serif), [`@fontsource/inter`](https://fontsource.org/fonts/inter) | 5.x | Self-hosted, no Google Fonts CDN dependency, no CLS |
+| Fonts | [`@fontsource/ibm-plex-mono`](https://fontsource.org/fonts/ibm-plex-mono), [`@fontsource/ibm-plex-sans`](https://fontsource.org/fonts/ibm-plex-sans) | 5.x | Mono for structure/code, sans for prose. Self-hosted, no Google Fonts CDN, no CLS. |
 | Hosting | [GitHub Pages](https://pages.github.com) | — | Free static hosting, served from a `buttuxama.github.io` user site |
 | CI/CD | [GitHub Actions](https://github.com/features/actions) | — | `actions/deploy-pages@v4` builds and deploys on every push to `main` |
 
@@ -21,9 +21,10 @@ No state management library, no CSS-in-JS, no router. Everything is in one bundl
 
 ## Features
 
-- **Single-page layout** with sticky translucent nav that highlights the active section as you scroll
-- **Live GitHub Projects section**: build-time `fetch()` of `https://api.github.com/users/buttuxama/repos` writes `src/content/projects-source.json`, which the React component imports. Top 4 most recently updated public repos are rendered as clickable cards
-- **Theme**: warm-dark canvas (`#191915`) with terracotta accent (`#cc785c`) — Anthropic-flavored palette, not pure black
+- **Developer-style aesthetic** inspired by the One Dark code-editor palette: `bg #1e222a`, `fg #abb2bf`, `accent #61afef` (One Dark blue), plus syntax-color tokens for strings, numbers, keywords, and comments
+- **REPL hero** — a Python REPL that types itself out character by character on page load, with a blinking block cursor and `prefers-reduced-motion` respect (the full text appears instantly if the user has reduced motion enabled)
+- **Live GitHub Projects section**: build-time `fetch()` of `https://api.github.com/users/buttuxama/repos` writes `src/content/projects-source.json`, which the React component imports. Top 4 most recently updated public repos are rendered as cards with GitHub-style language dot colors
+- **Mobile hamburger nav** — brand on the left, hamburger on the right; opens a full-width panel that locks body scroll and dismisses on link click, outside click, or Escape
 - **Responsive** at 375px / 768px / 1024px breakpoints
 - **Type-safe content** — every piece of resume content is a typed array in `src/content/*.ts`, no string concatenation or HTML strings
 - **Auto-deploys** on push to `main` via GitHub Pages Actions

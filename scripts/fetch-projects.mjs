@@ -5,6 +5,11 @@ import { writeFileSync } from 'node:fs';
 const USERNAME = 'buttuxama';
 const OUT = 'src/content/projects-source.json';
 
+// Repos to exclude from the site. Add full repo names here (case-sensitive).
+const SKIP = new Set([
+  'buttuxama.github.io', // the portfolio site itself — meta-repo, not a project
+]);
+
 const res = await fetch(
   `https://api.github.com/users/${USERNAME}/repos?per_page=100&sort=updated&type=owner`,
   {
@@ -24,6 +29,7 @@ const repos = await res.json();
 
 const filtered = repos
   .filter((r) => !r.fork && typeof r.description === 'string' && r.description.length > 0)
+  .filter((r) => !SKIP.has(r.name))
   .slice(0, 4)
   .map((r) => ({
     name: r.name,

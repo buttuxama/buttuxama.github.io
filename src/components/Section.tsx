@@ -21,20 +21,20 @@ export function Section({
   return (
     <section
       id={id}
-      className={cn('py-12 md:py-16 scroll-mt-20', className)}
+      className={cn('py-14 md:py-20 scroll-mt-16', className)}
     >
       <div className="container-narrow">
         <div className="max-w-2xl">
           {eyebrow && (
-            <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-accent">
-              {eyebrow}
+            <p className="mb-2 font-mono text-sm text-syntax-comment">
+              // {eyebrow.toLowerCase()}
             </p>
           )}
-          <h2 className="font-serif text-3xl md:text-4xl leading-[1.1] tracking-tight">
+          <h2 className="font-mono text-2xl md:text-3xl leading-[1.15] tracking-tight text-fg">
             {title}
           </h2>
           {description && (
-            <p className="mt-4 text-base md:text-lg text-fg-muted">
+            <p className="mt-3 text-base text-fg-muted font-sans leading-relaxed">
               {description}
             </p>
           )}

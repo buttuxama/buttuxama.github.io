@@ -6,31 +6,37 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        canvas: '#191915',
-        surface: '#262624',
-        'surface-2': '#2f2e2b',
-        border: '#3a3935',
+        bg: '#1e222a',
+        panel: '#282c34',
+        'panel-hover': '#2c313c',
+        border: '#3b4048',
         fg: {
-          DEFAULT: '#faf9f5',
-          muted: '#b0aea5',
-          subtle: '#8a8880',
+          DEFAULT: '#abb2bf',
+          muted: '#636d83',
+          subtle: '#4b5263',
         },
         accent: {
-          DEFAULT: '#cc785c',
-          hover: '#e08c6b',
+          DEFAULT: '#61afef',
+          hover: '#78c2ff',
+        },
+        syntax: {
+          string: '#98c379',
+          number: '#d19a66',
+          keyword: '#c678dd',
+          comment: '#5c6370',
         },
       },
       fontFamily: {
-        serif: [
-          '"IBM Plex Serif"',
-          'ui-serif',
-          'Georgia',
-          'Cambria',
-          '"Times New Roman"',
-          'serif',
+        mono: [
+          '"IBM Plex Mono"',
+          'ui-monospace',
+          'SFMono-Regular',
+          'Menlo',
+          'Monaco',
+          'monospace',
         ],
         sans: [
-          'Inter',
+          '"IBM Plex Sans"',
           'ui-sans-serif',
           'system-ui',
           '-apple-system',

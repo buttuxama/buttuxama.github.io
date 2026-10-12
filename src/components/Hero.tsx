@@ -1,63 +1,161 @@
-import { ArrowRight, Github, Linkedin, FileDown, Mail } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { profile } from '../content/profile';
 
+type ReplLine =
+  | { kind: 'prompt'; text: string }
+  | { kind: 'string'; text: string }
+  | { kind: 'plain'; text: string };
+
+const SCRIPT: ReplLine[] = [
+  { kind: 'prompt', text: 'import engineer' },
+  { kind: 'prompt', text: 'engineer.name' },
+  { kind: 'string', text: `'${profile.name}'` },
+  { kind: 'prompt', text: 'engineer.role' },
+  { kind: 'string', text: `'${profile.tagline}'` },
+  { kind: 'prompt', text: 'engineer.location' },
+  { kind: 'string', text: `'${profile.location.replace(/,.*$/, '')}, DE'` },
+  { kind: 'prompt', text: 'engineer.stack' },
+  {
+    kind: 'string',
+    text: "['Python', 'RAG', 'AI Agents', 'FastAPI', 'LangGraph', 'Angular', 'ASP.NET Core', 'Docker']",
+  }
+];
+
+const TYPE_DELAY_MS = 22;
+const LINE_GAP_MS = 90;
+
+function usePrefersReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReduced(mq.matches);
+    const onChange = () => setReduced(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  return reduced;
+}
+
+function classForLine(line: ReplLine): string {
+  if (line.kind === 'prompt') return 'text-accent';
+  if (line.kind === 'string') return 'text-syntax-string';
+  return 'text-fg';
+}
+
 export function Hero() {
+  const reducedMotion = usePrefersReducedMotion();
+  const [visible, setVisible] = useState<ReplLine[]>(
+    reducedMotion ? SCRIPT : [{ kind: 'plain', text: '>>>' }],
+  );
+  const [done, setDone] = useState(reducedMotion);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (reducedMotion) {
+      setVisible(SCRIPT);
+      setDone(true);
+      return;
+    }
+
+    setVisible([{ kind: 'plain', text: '>>>' }]);
+    setDone(false);
+
+    let lineIdx = 0;
+    let charIdx = 0;
+    let timer: number;
+
+    const tick = () => {
+      if (lineIdx >= SCRIPT.length) {
+        setDone(true);
+        return;
+      }
+      const line = SCRIPT[lineIdx];
+      if (charIdx < line.text.length) {
+        charIdx += 1;
+        setVisible(SCRIPT.slice(0, lineIdx).concat([{ ...line, text: line.text.slice(0, charIdx) }]));
+        timer = window.setTimeout(tick, TYPE_DELAY_MS);
+      } else {
+        lineIdx += 1;
+        charIdx = 0;
+        timer = window.setTimeout(tick, LINE_GAP_MS);
+      }
+    };
+
+    timer = window.setTimeout(tick, 350);
+    return () => window.clearTimeout(timer);
+  }, [reducedMotion]);
+
   return (
-    <section id="top" className="relative pt-28 md:pt-36 pb-20 md:pb-28">
+    <section id="top" className="relative pt-24 md:pt-32 pb-12 md:pb-16">
       <div className="container-narrow">
-        <div className="grid items-center gap-10 md:grid-cols-[1fr_auto]">
-          <div className="max-w-3xl">
-            <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface/60 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-fg-muted">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-              {profile.tagline}
+        <div className="grid items-start gap-10 md:grid-cols-[1fr_auto]">
+          <div className="min-w-0">
+            <p className="font-mono text-sm text-syntax-comment">
+              // {profile.tagline.toLowerCase()}
             </p>
-            <h1 className="font-serif text-5xl md:text-7xl leading-[1.02] tracking-tight">
-              {profile.name.split(' ')[0]}{' '}{profile.name.split(' ')[1]}{' '}
-              <span className="text-accent">
-                {profile.name.split(' ').slice(2).join(' ')}
-              </span>
+            <h1 className="mt-3 font-mono text-3xl md:text-4xl leading-[1.1] tracking-tight text-fg">
+              {profile.name}
             </h1>
-            <p className="mt-5 text-sm text-fg-muted">
-              {profile.location} · {profile.relocation}
+            <p className="mt-2 font-sans text-sm text-fg-muted">
+              {profile.location}
             </p>
-            <p className="mt-6 max-w-2xl text-lg md:text-xl text-fg-muted leading-relaxed">
+            <p className="mt-1 font-sans text-sm text-fg-subtle">
+              {profile.relocation}
+            </p>
+
+            <div
+              ref={containerRef}
+              className="mt-8 rounded-md border border-border bg-panel p-4 md:p-5 font-mono text-sm leading-relaxed"
+              aria-label="Interactive Python REPL introducing the engineer"
+            >
+              {visible.map((line, i) => (
+                <div key={i} className={classForLine(line)}>
+                  <pre className="m-0 font-mono whitespace-pre-wrap break-words">
+{line.kind === 'prompt' ? `>>> ${line.text}` : line.text}
+                  </pre>
+                </div>
+              ))}
+              {!done && (
+                <span
+                  aria-hidden="true"
+                  className="inline-block h-4 w-2 -mb-0.5 bg-accent align-middle"
+                  style={{ animation: 'caret-blink 1s steps(1) infinite' }}
+                />
+              )}
+            </div>
+
+            <p className="mt-6 max-w-2xl font-sans text-base md:text-lg text-fg-muted leading-relaxed">
               {profile.summary}
             </p>
 
-            <div className="mt-9 flex flex-wrap items-center gap-3">
-              <a
-                href="#experience"
-                className="inline-flex items-center gap-2 rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-canvas hover:bg-accent-hover transition-colors"
-              >
-                View Experience <ArrowRight size={16} />
-              </a>
-              <a
-                href="/resume.pdf"
-                className="inline-flex items-center gap-2 rounded-md border border-border px-5 py-2.5 text-sm font-medium text-fg hover:border-accent hover:text-accent transition-colors"
-              >
-                <FileDown size={16} /> Download Resume
-              </a>
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 font-mono text-sm">
               <a
                 href={profile.github}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-md px-3 py-2.5 text-sm text-fg-muted hover:text-fg transition-colors"
+                className="text-fg-muted border-b border-border hover:text-accent hover:border-accent transition-colors"
               >
-                <Github size={16} /> GitHub
+                github
               </a>
               <a
                 href={profile.linkedin}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-md px-3 py-2.5 text-sm text-fg-muted hover:text-fg transition-colors"
+                className="text-fg-muted border-b border-border hover:text-accent hover:border-accent transition-colors"
               >
-                <Linkedin size={16} /> LinkedIn
+                linkedin
               </a>
               <a
                 href={`mailto:${profile.email}`}
-                className="inline-flex items-center gap-2 rounded-md px-3 py-2.5 text-sm text-fg-muted hover:text-fg transition-colors"
+                className="text-fg-muted border-b border-border hover:text-accent hover:border-accent transition-colors"
               >
-                <Mail size={16} /> Email
+                email
+              </a>
+              <a
+                href="/resume.pdf"
+                className="text-fg-muted border-b border-border hover:text-accent hover:border-accent transition-colors"
+              >
+                resume.pdf
               </a>
             </div>
           </div>
@@ -66,15 +164,22 @@ export function Hero() {
             <img
               src="/avatar.jpg"
               alt={profile.name}
-              width={160}
-              height={160}
-              className="h-40 w-40 rounded-2xl border border-border object-cover"
+              width={112}
+              height={112}
+              className="h-28 w-28 rounded-md border border-border object-cover"
               loading="eager"
               decoding="async"
             />
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes caret-blink {
+          0%, 50% { opacity: 1; }
+          50.01%, 100% { opacity: 0; }
+        }
+      `}</style>
     </section>
   );
 }

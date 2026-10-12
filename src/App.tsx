@@ -8,7 +8,7 @@ import { Certifications } from './components/Certifications';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-canvas text-fg font-sans">
+    <div className="min-h-screen bg-bg text-fg font-mono">
       <Nav />
       <main>
         <Hero />
