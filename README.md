@@ -111,16 +111,6 @@ The Actions workflow:
 - Uploads `dist/` as a Pages artifact
 - Deploys via `actions/deploy-pages@v4`
 
-## Architecture notes
-
-**Why build-time fetch instead of runtime fetch?** The site is fully static. Calling `https://api.github.com/users/buttuxama/repos` from the browser would (a) hit GitHub's anonymous rate limit of 60 requests/hour per IP, shared across all visitors, (b) show "Loading…" skeletons on first paint, and (c) be impossible to verify in `npm run preview` since `localhost` doesn't reach `api.github.com`. Doing it at build time means visitors see instant cards and the API is only hit on each `main` push.
-
-**Why no React Router?** The page is a single document with anchor navigation. The nav links are `<a href="#experience">` etc., and `Section` uses `scroll-mt-20` so the fixed nav doesn't clip the heading.
-
-**Why a custom palette instead of stock Tailwind colors?** Stock Tailwind doesn't have the warm-dark "Claude/Anthropic" feel (`#191915` is warm, not the cold `#000`). The palette is defined in `tailwind.config.ts` under `theme.extend.colors` and used as `bg-canvas`, `bg-surface`, `text-fg`, `text-accent`, etc.
-
-**Why two fonts?** IBM Plex Serif for headings gives the page an editorial/considered tone (Anthropic marketing flavor). Inter for body matches the Claude.ai chat flavor. Both are self-hosted via `@fontsource` so the site has no Google Fonts dependency.
-
 ## Customise
 
 - **Resume PDF**: replace `public/resume.pdf`. The "Download Resume" button downloads it.
