@@ -99,7 +99,7 @@ export function Hero() {
             <p className="mt-2 font-sans text-sm text-fg-muted">
               {profile.location}
             </p>
-            <p className="mt-1 font-sans text-sm text-fg-subtle">
+            <p className="mt-1 font-sans text-sm font-medium text-fg">
               {profile.relocation}
             </p>
 
