@@ -151,12 +151,6 @@ export function Hero() {
               >
                 email
               </a>
-              <a
-                href="/resume.pdf"
-                className="text-fg-muted border-b border-border hover:text-accent hover:border-accent transition-colors"
-              >
-                resume.pdf
-              </a>
             </div>
           </div>
 
