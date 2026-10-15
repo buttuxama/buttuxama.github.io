@@ -13,7 +13,7 @@ const SCRIPT: ReplLine[] = [
   { kind: 'prompt', text: 'engineer.role' },
   { kind: 'string', text: `'${profile.tagline}'` },
   { kind: 'prompt', text: 'engineer.location' },
-  { kind: 'string', text: `'${profile.location.replace(/,.*$/, '')}, DE'` },
+  { kind: 'string', text: `'${profile.location}'` },
   { kind: 'prompt', text: 'engineer.stack' },
   {
     kind: 'string',
